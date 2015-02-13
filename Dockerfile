@@ -10,8 +10,15 @@ ENV GALAXY_CONFIG_BRAND RNA workbench
 
 WORKDIR /galaxy-central
 
+# workaround for a Docker AUFS bug: https://github.com/docker/docker/issues/783#issuecomment-56013588
+RUN mkdir /etc/ssl/private-copy; mv /etc/ssl/private/* /etc/ssl/private-copy/; rm -r /etc/ssl/private; mv /etc/ssl/private-copy /etc/ssl/private; chmod -R 0700 /etc/ssl/private; chown -R postgres /etc/ssl/private
+
+
 RUN install-repository "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name data_manager_fetch_genome_all_fasta" \
     "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name data_manager_bwa_index_builder" \
+    "--url https://toolshed.g2.bx.psu.edu/ -o bgruening --name text_processing --panel-section-id textutil" \
+    '--url https://toolshed.g2.bx.psu.edu/ -o iuc --name bedtools --panel-section-name BED-Tools' \
+    "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name emboss_5 --panel-section-name EMBOSS" \
     "--url https://testtoolshed.g2.bx.psu.edu/ -o rnateam --name data_manager_bowtie"
 
 # modified supervisor conf file
@@ -61,4 +68,6 @@ ENV GALAXY_CONFIG_JOB_WORKING_DIRECTORY=/export/galaxy-central/database/job_work
 
 # Change the standard IPython notebook to galaxy-ipython-stable
 RUN sed 's|image =.*|image = bgruening/galaxy-ipython-notebook-plus|g' config/plugins/interactive_environments/ipython/config/ipython.ini.sample >  config/plugins/interactive_environments/ipython/config/ipython.ini
+
+RUN docker pull bgruening/galaxy-ipython-notebook-plus
 
