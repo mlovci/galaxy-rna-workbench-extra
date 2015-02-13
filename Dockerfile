@@ -69,5 +69,3 @@ ENV GALAXY_CONFIG_JOB_WORKING_DIRECTORY=/export/galaxy-central/database/job_work
 # Change the standard IPython notebook to galaxy-ipython-stable
 RUN sed 's|image =.*|image = bgruening/galaxy-ipython-notebook-plus|g' config/plugins/interactive_environments/ipython/config/ipython.ini.sample >  config/plugins/interactive_environments/ipython/config/ipython.ini
 
-RUN docker pull bgruening/galaxy-ipython-notebook-plus
-
