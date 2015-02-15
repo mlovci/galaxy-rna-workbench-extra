@@ -27,6 +27,9 @@ RUN install-repository "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name 
     "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name emboss_5 --panel-section-name EMBOSS" \
     "--url https://testtoolshed.g2.bx.psu.edu/ -o rnateam --name data_manager_bowtie"
 
+
+RUN curl -sL https://dl.dropboxusercontent.com/u/13191686/bled.tgz | tar xz && mkdir -p /shed_tools/EDeN/test-data/ && cp -r bled/* /shed_tools/EDeN/test-data/ && rm -rf ./bled
+
 # modified supervisor conf file
 ADD galaxy_build.conf /etc/galaxy/
 ADD galaxy_build.ini /etc/galaxy/
@@ -74,7 +77,5 @@ ENV GALAXY_CONFIG_JOB_WORKING_DIRECTORY=/export/galaxy-central/database/job_work
 
 # Change the standard IPython notebook to galaxy-ipython-stable
 RUN sed 's|image =.*|image = bgruening/galaxy-ipython-notebook-plus|g' config/plugins/interactive_environments/ipython/config/ipython.ini.sample >  config/plugins/interactive_environments/ipython/config/ipython.ini
-
-RUN curl -sL https://dl.dropboxusercontent.com/u/13191686/bled.tgz | tar xz && mkdir -p /shed_tools/EDeN/test-data/ && cp -r bled/* /shed_tools/EDeN/test-data/ && rm -rf ./bled
 
 
