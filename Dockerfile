@@ -10,8 +10,14 @@ ENV GALAXY_CONFIG_BRAND RNA workbench
 
 WORKDIR /galaxy-central
 
-# workaround for a Docker AUFS bug: https://github.com/docker/docker/issues/783#issuecomment-56013588
-RUN mkdir /etc/ssl/private-copy; mv /etc/ssl/private/* /etc/ssl/private-copy/; rm -r /etc/ssl/private; mv /etc/ssl/private-copy /etc/ssl/private; chmod -R 0700 /etc/ssl/private; chown -R postgres /etc/ssl/private
+
+# TODO: rnashapes is currently not in the ToolShed install it via PPA
+RUN apt-get -qq update && apt-get install --no-install-recommends -y apt-transport-https software-properties-common && \
+    apt-add-repository -y ppa:bibi-help/bibitools && \
+    apt-get -qq update && \
+    apt-get install --no-install-recommends -y rnashapes && \
+    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    . /home/galaxy/venv/bin/activate && pip install bioblend
 
 
 RUN install-repository "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name data_manager_fetch_genome_all_fasta" \
@@ -68,4 +74,7 @@ ENV GALAXY_CONFIG_JOB_WORKING_DIRECTORY=/export/galaxy-central/database/job_work
 
 # Change the standard IPython notebook to galaxy-ipython-stable
 RUN sed 's|image =.*|image = bgruening/galaxy-ipython-notebook-plus|g' config/plugins/interactive_environments/ipython/config/ipython.ini.sample >  config/plugins/interactive_environments/ipython/config/ipython.ini
+
+RUN curl -sL https://dl.dropboxusercontent.com/u/13191686/bled.tgz | tar xz && mkdir -p /shed_tools/EDeN/test-data/ && cp -r bled/* /shed_tools/EDeN/test-data/ && rm -rf ./bled
+
 
