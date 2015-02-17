@@ -1,7 +1,15 @@
 RNA Galaxy Workbench
 ====================
 
-The RNA analyses workbench is developed by the RNA Bioinformatics Center which is part of the  [German Network for Bioinformatics Infrastructure (de.NBI)](http://www.denbi.de/). 
+The RNA analysis workbench is developed by the RNA Bioinformatics Center which is part of the  [German Network for Bioinformatics Infrastructure (de.NBI)](http://www.denbi.de/). 
+
+
+Installation
+============
+
+ * Install [Docker](http://docs.docker.com) on your computer, please follow the [instruction](http://docs.docker.com/installation/)
+ * get the Image: `docker pull bgruening/galaxy-rna-workbench-extra`
+ * follow the Usage instruction and start your [Galaxy](http://galaxyproject.org/) instance
 
 
 Usage
@@ -11,23 +19,23 @@ At first you need to install docker. Please follow the instruction on https://do
 
 After the successful installation, all what you need to do is:
 
-``docker run -d -p 8080:80 bgruening/galaxy-rna-workbench``
+``docker run -d -p 8080:80 bgruening/galaxy-rna-workbench-extra``
 
-I will shortly explain the meaning of all the parameters. For a more detailed describtion please consult the [docker manual](http://docs.docker.io/), it's really worth reading.
+I will shortly explain the meaning of all the parameters. For a more detailed description please consult the [docker manual](http://docs.docker.io/), it's really worth reading.
 
-Let's start: ``docker run`` will run the Image/Container for you. In case you do not have the Container stored locally, docker will download it for you. ``-p 8080:80`` will make the port 80 (inside of the container) available on port 8080 on your host. Inside the container a Apache Webserver is running on port 80 and that port can be bound to a local port on your host computer. With this parameter you can access your Galaxy instance via ``http://localhost:8080`` immediately after executing the command above. ``bgruening/galaxy-deeptools`` is the Image/Container name, that directs docker to the correct path in the [docker index](https://index.docker.io/u/bgruening/galaxy-stable/). ``-d`` will start the docker container in daemon mode. For an interactive session, you can execute:
+Let's start: ``docker run`` will run the image for you. In case you do not have the image stored locally, docker will download it for you. ``-p 8080:80`` will make the port 80 (inside of the container) available on port 8080 on your host. Inside the container an Nginx webserver is running on port 80 and that port can be bound to a local port on your host computer. With this parameter you can access your Galaxy instance via ``http://localhost:8080`` immediately after executing the command above. ``bgruening/galaxy-rna-workbench-extra`` is the image name, that directs docker to the correct path in the [docker index](https://index.docker.io/u/bgruening/galaxy-stable/). ``-d`` will start the docker container in daemon mode. For an interactive session, you can execute:
 
-``docker run -i -t -p 8080:80 bgruening/galaxy-rna-workbench``
+``docker run -i -t -p 8080:80 bgruening/galaxy-rna-workbench-extra /bin/bash``
 
-and run the ``` startup ``` script by your own, to start PostgreSQL, Apache and Galaxy.
+and run the ``` startup ``` script yourself, to start PostgreSQL, Nginx and Galaxy.
 
 Docker images are "read-only", all your changes inside one session will be lost after restart. This mode is usefull to present Galaxy to your collegues or to run workshops with it. To install Tool Shed respositories or to save your data you need to export the calculated data to the host computer.
 
 Fortunately, this is as easy as:
 
-``docker run -d -p 8080:80 -v /home/user/galaxy_storage/:/export/ bgruening/galaxy-rna-workbench``
+``docker run -p 8080:80 -v /home/user/galaxy_storage/:/export/ bgruening/galaxy-rna-workbench-extra``
 
-With the additional ``-v /home/user/galaxy_storage/:/export/`` parameter, docker will mount the folder ``/home/user/galaxy_storage`` into the Container under ``/export/``. A ``startup.sh`` script, that is usually starting Apache, PostgreSQL and Galaxy, will recognise the export directory with one of the following outcomes:
+With the additional ``-v /home/user/galaxy_storage/:/export/`` parameter, docker will mount the folder ``/home/user/galaxy_storage`` into the container under ``/export/``. The ``startup`` shell script, that is usually starting Nginx, PostgreSQL and Galaxy, will recognise the export directory with one of the following outcomes:
 
   - In case of an empty ``/export/`` directory, it will move the [PostgreSQL](http://www.postgresql.org/) database, the Galaxy database directory, Shed Tools and Tool Dependencies and various config scripts to /export/ and symlink back to the original location.
   - In case of a non-empty ``/export/``, for example if you continue a previouse session within the same folder, nothing will be moved, but the symlinks will be created.
@@ -41,18 +49,19 @@ Enabling Interactive Environments in Galaxy
 Interactive Environments (IE) are sophisticated ways to extend Galaxy with powerful services, like IPython, in a secure and reproducible way.
 For this we need to be able to launch Docker containers inside our Galaxy Docker container. At least docker 1.3 is needed on the host system.
 
-``docker run -d -p 8080:80 -p 8021:21 -p 8800:8800 --privileged=true -v /home/user/galaxy_storage/:/export/ bgruening/galaxy-stable``
+``docker run -p 8080:80 -p 8021:21 -p 8800:8800 --privileged -v /home/user/galaxy_storage/:/export/ bgruening/galaxy-rna-workbench-extra``
 
-The port 8800 is the proxy port that is used to handle Interactive Environments. ``--privileged`` is needed to start docker containers inside docker.
+The port 8800 is the proxy port that is used to handle Interactive Environments. ``--privileged`` is needed to start nested docker containers.
 
 Using Parent docker
 -------------------
 On some linux distributions, Docker-In-Docker can run into issues (such as running out of loopback interfaces). If this is an issue,
-you can use a 'legacy' mode that use a docker socket for the parent docker installation mounted inside the container. To engage, set the 
-environmental variable DOCKER_PARENT
+you can use a 'legacy' mode that mounts the host machines docker socket inside the container. To engage, set the 
+environmental variable `DOCKER_PARENT`, and mount the socket using the ``-v`` parameter
 
-``docker run -d -p 8080:80 -p 8021:21 -p 8800:8800 --privileged=true -e DOCKER_PARENT=True -v /var/run/docker.sock:/var/run/docker.sock -v /home/user/galaxy_storage/:/export/ bgruening/galaxy-stable``
+``docker run -p 8080:80 -p 8021:21 -p 8800:8800 --privileged -e DOCKER_PARENT=True -v /var/run/docker.sock:/var/run/docker.sock -v /home/user/galaxy_storage/:/export/ bgruening/galaxy-rna-workbench-extra``
 
+The command above also maps another port ``-p 8021:21``, used for ftp upload of large datasets.
 
 
 Users & Passwords
@@ -86,7 +95,7 @@ History
 Support & Bug Reports
 =====================
 
-For support, questions, or feature requests contact deeptools@googlegroups.com or fill bug reports at https://github.com/bgruening/galaxy_recipes/issues.
+For support, questions, or feature requests fill [github issues](https://github.com/bgruening/galaxy-rna-workbench-extra/issues) or contribute with [Pull Requests](https://github.com/bgruening/galaxy-rna-workbench-extra/pulls).
 
 
 
