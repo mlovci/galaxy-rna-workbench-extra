@@ -22,6 +22,7 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y apt-transpo
 
 RUN install-repository "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name data_manager_fetch_genome_all_fasta" \
     "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name data_manager_bwa_index_builder" \
+    "--url https://toolshed.g2.bx.psu.edu/ -o iuc --name package_gnu_awk_4_1_0" \
     "--url https://toolshed.g2.bx.psu.edu/ -o bgruening --name text_processing --panel-section-id textutil" \
     '--url https://toolshed.g2.bx.psu.edu/ -o iuc --name bedtools --panel-section-name BED-Tools' \
     "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name emboss_5 --panel-section-name EMBOSS" \
