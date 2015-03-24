@@ -31,8 +31,6 @@ RUN install-repository "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name 
     "--url https://testtoolshed.g2.bx.psu.edu/ -o rnateam --name data_manager_bowtie"
 
 
-RUN curl -sL https://dl.dropboxusercontent.com/u/13191686/bled.tgz | tar xz && mkdir -p /shed_tools/EDeN/test-data/ && cp -r bled/* /shed_tools/EDeN/test-data/ && rm -rf ./bled
-
 # modified supervisor conf file
 ADD galaxy_build.conf /etc/galaxy/
 ADD galaxy_build.ini /etc/galaxy/
