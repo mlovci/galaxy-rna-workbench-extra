@@ -4,7 +4,8 @@
 
 FROM bgruening/galaxy-rna-workbench
 
-MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
+#mostly from galaxy-rna-workbench-extra by bgreuning
+MAINTAINER Michael Lovci; michaeltlovci@gmail.com
 
 ENV GALAXY_CONFIG_BRAND RNA workbench
 
@@ -21,14 +22,16 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y apt-transpo
 
 
 RUN install-repository "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name data_manager_fetch_genome_all_fasta" \
-    "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name data_manager_bwa_index_builder" \
+    "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name package_bowtie2_2_1_0" \
+    "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name bowtie2 --panel-section-name RNATools" \
     "--url https://toolshed.g2.bx.psu.edu/ -o iuc --name package_gnu_awk_4_1_0" \
     "--url https://toolshed.g2.bx.psu.edu/ -o iuc --name package_gnu_grep_2_14" \
     "--url https://toolshed.g2.bx.psu.edu/ -o iuc --name package_gnu_sed_4_2_2_sandbox" \
     "--url https://toolshed.g2.bx.psu.edu/ -o bgruening --name text_processing --panel-section-id textutil" \
     '--url https://toolshed.g2.bx.psu.edu/ -o iuc --name bedtools --panel-section-name BED-Tools' \
     "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name emboss_5 --panel-section-name EMBOSS" \
-    "--url https://testtoolshed.g2.bx.psu.edu/ -o rnateam --name data_manager_bowtie"
+    "--url https://testtoolshed.g2.bx.psu.edu/ -o devteam --name data_manager_bowtie2_index_builder"  \
+    "--url https://testtoolshed.g2.bx.psu.edu/ -o mvdbeek --name docker_toolfactory_alpha --panel-section-name Docker"
 
 
 # modified supervisor conf file
@@ -76,7 +79,7 @@ ENV GALAXY_CONFIG_JOB_WORKING_DIRECTORY=/export/galaxy-central/database/job_work
     GALAXY_CONFIG_INTEGRATED_TOOL_PANEL_CONFIG=/export/galaxy-central/integrated_tool_panel.xml
 
 
-# Change the standard IPython notebook to galaxy-ipython-stable
-RUN sed 's|image =.*|image = bgruening/galaxy-ipython-notebook-plus|g' config/plugins/interactive_environments/ipython/config/ipython.ini.sample >  config/plugins/interactive_environments/ipython/config/ipython.ini
+## Change the standard IPython notebook to galaxy-ipython-stable
+#RUN sed 's|image =.*|image = bgruening/galaxy-ipython-notebook-plus|g' config/plugins/interactive_environments/ipython/config/ipython.ini.sample >  config/plugins/interactive_environments/ipython/config/ipython.ini
 
 
