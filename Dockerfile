@@ -18,11 +18,13 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y apt-transpo
     apt-get -qq update && \
     apt-get install --no-install-recommends -y rnashapes && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    . /home/galaxy/venv/bin/activate && \
-    pip install --upgrade setuptools && \
-    pip install --upgrade pulsar-app && \
-    pip install --upgrade bioblend
+    . /home/galaxy/venv/bin/activate
+RUN easy_install -U pip
+RUN sudo pip install --upgrade setuptools && \
+    sudo pip install --upgrade pulsar-app && \
+    sudo pip install --upgrade bioblend
 
+RUN mkdir /etc/ssl/private-copy; mv /etc/ssl/private/* /etc/ssl/private-copy/; rm -r /etc/ssl/private; mv /etc/ssl/private-copy /etc/ssl/private; chmod -R 0700 /etc/ssl/private; chown -R postgres /etc/ssl/private
 
 RUN install-repository "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name data_manager_fetch_genome_all_fasta" \
     "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name package_bowtie2_2_1_0" \
