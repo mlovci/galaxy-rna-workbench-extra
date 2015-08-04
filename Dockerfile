@@ -18,7 +18,8 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y apt-transpo
     apt-get -qq update && \
     apt-get install --no-install-recommends -y rnashapes && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    . /home/galaxy/venv/bin/activate && pip install --upgrade pulsar-app # && pip install bioblend
+    . /home/galaxy/venv/bin/activate 
+    ##&& pip install --upgrade pulsar-app # && pip install bioblend
 
 
 RUN install-repository "--url https://toolshed.g2.bx.psu.edu/ -o devteam --name data_manager_fetch_genome_all_fasta" \
