@@ -18,8 +18,7 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y apt-transpo
     apt-add-repository -y ppa:bibi-help/bibitools && \
     apt-get -qq update && \
     apt-get install --no-install-recommends -y rnashapes && \
-    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    . /home/galaxy/venv/bin/activate
+    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
 RUN easy_install -U pip
 RUN sudo pip install --upgrade setuptools && \
     sudo pip install --upgrade pulsar-app && \
